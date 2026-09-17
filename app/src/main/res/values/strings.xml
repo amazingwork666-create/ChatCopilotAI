@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ChatCopilot AI</string>
+    <string name="knowledge_base">Knowledge Base</string>
+    <string name="accessibility_service_label">ChatCopilot Screen Reader</string>
+    <string name="accessibility_description">Reads on-screen conversation text to help generate AI replies. ChatCopilot never sends messages automatically.</string>
+    <string name="bubble_description">ChatCopilot AI assistant bubble</string>
+    <string name="stop_generation">Stop generating</string>
+    <string name="copy">Copy</string>
+    <string name="shorten">Shorten</string>
+    <string name="regenerate">Retry</string>
+    <string name="save">Save</string>
+</resources>
