@@ -20,8 +20,7 @@ import java.util.concurrent.TimeUnit
 
 object LlmClient {
 
-    private const val BASE_URL = "https://api.anthropic.com/v1/messages"
-    private const val MODEL = "claude-sonnet-4-6"
+    private const val BASE_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:streamGenerateContent?alt=sse"
 
     private val httpClient = OkHttpClient.Builder()
         .connectTimeout(30, TimeUnit.SECONDS)
@@ -49,9 +48,8 @@ object LlmClient {
         val request = Request.Builder()
             .url(BASE_URL)
             .post(requestBodyJson.toRequestBody("application/json".toMediaType()))
-            .addHeader("x-api-key", apiKey)
-            .addHeader("anthropic-version", "2023-06-01")
-            .addHeader("content-type", "application/json")
+            .addHeader("x-goog-api-key", apiKey.trim())
+            .addHeader("Content-Type", "application/json")
             .build()
 
         withContext(Dispatchers.IO) {
@@ -82,16 +80,22 @@ object LlmClient {
                         val trimmed = line.trim()
                         if (!trimmed.startsWith("data: ")) continue
                         val data = trimmed.removePrefix("data: ").trim()
-                        if (data == "[DONE]" || data.isEmpty()) continue
+                        if (data.isEmpty() || data == "[DONE]") continue
 
                         runCatching {
                             val json = JSONObject(data)
-                            if (json.optString("type") == "content_block_delta") {
-                                val delta = json.optJSONObject("delta")
-                                if (delta?.optString("type") == "text_delta") {
-                                    val token = delta.optString("text", "")
-                                    if (token.isNotEmpty()) {
-                                        withContext(Dispatchers.Main) { onToken(token) }
+                            val candidates = json.optJSONArray("candidates")
+                            if (candidates != null && candidates.length() > 0) {
+                                val candidate = candidates.getJSONObject(0)
+                                val content = candidate.optJSONObject("content")
+                                val parts = content?.optJSONArray("parts")
+                                if (parts != null) {
+                                    for (i in 0 until parts.length()) {
+                                        val part = parts.getJSONObject(i)
+                                        val token = part.optString("text", "")
+                                        if (token.isNotEmpty()) {
+                                            withContext(Dispatchers.Main) { onToken(token) }
+                                        }
                                     }
                                 }
                             }
@@ -134,17 +138,29 @@ object LlmClient {
             5. Keep replies natural and conversational, not robotic.
         """.trimIndent()
 
+        val contentsArray = JSONArray().apply {
+            put(JSONObject().apply {
+                put("role", "user")
+                put("parts", JSONArray().apply {
+                    put(JSONObject().put("text", userMessage))
+                })
+            })
+        }
+
+        val systemInstruction = JSONObject().apply {
+            put("parts", JSONArray().apply {
+                put(JSONObject().put("text", fullSystem))
+            })
+        }
+
+        val generationConfig = JSONObject().apply {
+            put("maxOutputTokens", 1024)
+        }
+
         return JSONObject().apply {
-            put("model", MODEL)
-            put("max_tokens", 1024)
-            put("stream", true)
-            put("system", fullSystem)
-            put("messages", JSONArray().put(
-                JSONObject().apply {
-                    put("role", "user")
-                    put("content", userMessage)
-                }
-            ))
+            put("contents", contentsArray)
+            put("system_instruction", systemInstruction)
+            put("generationConfig", generationConfig)
         }.toString()
     }
 }
