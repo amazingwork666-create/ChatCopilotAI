@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="ChatCopilot AI"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            android:textColor="#1A1A1A"
+            android:layout_marginBottom="4dp" />
+
+        <TextView
+            android:id="@+id/tvStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Status: Checking…"
+            android:textSize="13sp"
+            android:textColor="#666666"
+            android:layout_marginBottom="24dp" />
+
+        <!-- API Key -->
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:text="Claude API Key" android:textStyle="bold"
+            android:textColor="#1A1A1A" android:layout_marginBottom="8dp"/>
+
+        <EditText
+            android:id="@+id/etApiKey"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword"
+            android:hint="sk-ant-…"
+            android:layout_marginBottom="8dp" />
+
+        <Button
+            android:id="@+id/btnSaveKey"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Save API Key"
+            android:layout_marginBottom="24dp" />
+
+        <!-- Tone -->
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:text="Response Tone" android:textStyle="bold"
+            android:textColor="#1A1A1A" android:layout_marginBottom="8dp"/>
+
+        <Spinner
+            android:id="@+id/spinnerTone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp" />
+
+        <!-- Actions -->
+        <Button
+            android:id="@+id/btnToggleService"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="Start Assistant"
+            android:textSize="16sp"
+            android:layout_marginBottom="12dp" />
+
+        <Button
+            android:id="@+id/btnKnowledgeBase"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Manage Knowledge Base"
+            android:layout_marginBottom="24dp"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="After starting, the bubble will float over all apps. Tap it on any chat to generate a reply."
+            android:textSize="13sp"
+            android:textColor="#888888"
+            android:lineSpacingMultiplier="1.4" />
+
+    </LinearLayout>
+</ScrollView>
